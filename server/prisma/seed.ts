@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-	const postAddress = await prisma.address.create({
+	const createdAddress = await prisma.address.create({
 		data: {
 			address_1: "123 Main St",
 			city: "New York",
@@ -11,36 +11,36 @@ async function main() {
 			zip: 10001,
 		},
 	});
-	const postCustomer = await prisma.customer.create({
+	const createdCustomer = await prisma.customer.create({
 		data: {
 			firstName: "John",
 			lastName: "Doe",
 			address: {
 				connect: {
-					id: postAddress.id,
+					id: createdAddress.id,
 				},
 			},
 			email: "john.doe@example.com",
 			phone: "+1 (555) 555-5555",
 		},
 	});
-	const postProduct = await prisma.product.create({
+	const createdProduct = await prisma.product.create({
 		data: {
 			name: "iPhone",
 			description: "The latest iPhone model",
 			itemPrice: 999.99,
 		},
 	});
-	const postOrder = await prisma.order.create({
+	const createdOrder = await prisma.order.create({
 		data: {
 			customer: {
 				connect: {
-					id: postCustomer.id,
+					id: createdCustomer.id,
 				},
 			},
 			product: {
 				connect: {
-					id: postProduct.id,
+					id: createdProduct.id,
 				},
 			},
 			discount: 42.5,
@@ -51,17 +51,17 @@ async function main() {
 
 	const customerOrders = await prisma.order.findMany({
 		where: {
-			customerId: postCustomer.id,
+			customerId: createdCustomer.id,
 		},
 	});
 
 	const ordersIdRelatedToCustomer = customerOrders.map((order) => ({ id: order.id }));
 
-	const productSale = await prisma.sale.create({
+	const createdSale = await prisma.sale.create({
 		data: {
 			customer: {
 				connect: {
-					id: postCustomer.id,
+					id: createdCustomer.id,
 				},
 			},
 			amount: 123.45,
@@ -70,7 +70,7 @@ async function main() {
 			},
 		},
 	});
-	console.log({ postAddress, postCustomer, postOrder, postProduct, productSale });
+	console.log({ createdAddress, createdCustomer, createdOrder, createdProduct, createdSale });
 }
 
 main()
